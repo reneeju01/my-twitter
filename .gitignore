@@ -127,3 +127,12 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+# Pycharm autofile
+.idea/
+.pycharm_helpers
+
+# Vagrant files
+.vagrant
+bionic64.box
