@@ -25,8 +25,10 @@ SECRET_KEY = 'e#@acan60f)jeee7o@0%yvj-r=le(q-4_5p4kb47-lajyy=7*8'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# VM IP
 ALLOWED_HOSTS = ['127.0.0.1', '192.168.56.16', 'localhost']
-
+# Remote address
+INTERNAL_IPS= ['192.168.56.1']
 
 # Application definition
 
@@ -40,6 +42,7 @@ INSTALLED_APPS = [
 
     # third party
     'rest_framework',
+    'debug_toolbar',
 
     # project apps
     'accounts',
@@ -51,6 +54,10 @@ REST_FRAMEWORK = {
 }
 
 MIDDLEWARE = [
+    # include the debug toolbar middleware as early as possible
+    # but must come after any other middlewares that encodes the response
+    # content, such as 'GZipMiddleware'
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
