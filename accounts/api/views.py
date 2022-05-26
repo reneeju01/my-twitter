@@ -53,7 +53,7 @@ class AccountViewSet(viewsets.ViewSet):
 
     @action(methods=['GET'], detail=False)
     def login_status(self, request):
-git         data ={
+        data ={
             'has_logged_in': request.user.is_authenticated,
             'ip': request.META['REMOTE_ADDR']
         }
