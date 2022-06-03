@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from tweets.models import Tweet
 
 
-class Newsfeed(models.Model):
+class NewsFeed(models.Model):
     # user, who will receive the tweet, not the one who post the tweet
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     tweet = models.ForeignKey(Tweet, on_delete=models.SET_NULL, null=True)
