@@ -2,7 +2,6 @@ from newsfeeds.models import NewsFeed
 from friendships.services import FriendshipService
 
 
-
 class NewsFeedService(object):
 
     @classmethod
@@ -18,5 +17,5 @@ class NewsFeedService(object):
             NewsFeed(user=follower, tweet=tweet)
             for follower in followers
         ]
-        newsfeeds.append(NewsFeed(tweet.user, tweet))
+        newsfeeds.append(NewsFeed(user=tweet.user, tweet=tweet))
         NewsFeed.objects.bulk_create(newsfeeds)
