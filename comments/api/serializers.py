@@ -4,6 +4,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from tweets.models import Tweet
 
+
 class CommentSerializer(serializers.ModelSerializer):
     user = UserSerializerForComment()
 
