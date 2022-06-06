@@ -1,39 +1,44 @@
+from newsfeeds.services import NewsFeedService
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
-from rest_framework import status
-from tweets.api.serializers import TweetSerializer, TweetSerializerForCreate
+from tweets.api.serializers import (
+    TweetSerializer,
+    TweetSerializerForCreate,
+    TweetSerializerWithComments,
+)
 from tweets.models import Tweet
-from newsfeeds.services import NewsFeedService
+from utils.decorators import required_params
 
 
 class TweetViewSet(viewsets.GenericViewSet):
     """
     API endpoint that allows users to create, list tweets
+
+    POST /api/tweets/ -> create
+    GET /api/tweets/?user_id=1 -> list
+    GET /api/tweets/1/ -> retrieve tweet.id=1 with comments
     """
     # queryset will be called in self.get_queryset()
     #     def list(self):
     #         self.get_queryset()
-    # queryset = Tweet.objects.all()
+    queryset = Tweet.objects.all()
 
     # use when create a new tweet
     serializer_class = TweetSerializerForCreate
 
     def get_permissions(self):
-        if self.action == 'list':
+        if self.action in ['list', 'retrieve']:
             return [AllowAny()]
         return [IsAuthenticated()]
 
-    def list(self, request):
+    @required_params(params=['user_id'])
+    def list(self, request, *args, **kwargs):
         """
         Override the list method, do not list all tweets, must specify
         user_id as a filter condition
         """
-        if 'user_id' not in request.query_params:
-            return Response(
-                'missing user_id',
-                status=status.HTTP_400_BAD_REQUEST,
-            )
         user_id = request.query_params['user_id']
 
         #This query will be translated as
@@ -50,6 +55,10 @@ class TweetViewSet(viewsets.GenericViewSet):
         serializer = TweetSerializer(tweets, many=True)
         # Return response in json format
         return Response({'tweets': serializer.data})
+
+    def retrieve(self, request, *args, **kwargs):
+        tweet = self.get_object()
+        return Response(TweetSerializerWithComments(tweet).data)
 
     def create(self, request):
         """

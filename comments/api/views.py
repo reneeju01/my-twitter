@@ -8,6 +8,7 @@ from comments.models import Comment
 from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
+from utils.decorators import required_params
 
 
 class CommentViewSet(viewsets.GenericViewSet):
@@ -16,11 +17,11 @@ class CommentViewSet(viewsets.GenericViewSet):
     no need retrieve ( any single comment) method
 
     POST /api/comments/  -> create
-    GET  /api/comments/  -> list
+    GET  /api/comments/?tweet_id=1  -> list
     GET /api/comments/1/ -> retrieve (Not Implemented)
     DELETE /api/comments/1/ -> destroy
     PATCH /api/comments/1/  -> partial_update (Not Implemented)
-    PUT /api/comments/1/    -> update
+    PUT /api/comments/1/    -> update , require content
 
     """
     serializer_class = CommentSerializerForCreate
@@ -39,13 +40,9 @@ class CommentViewSet(viewsets.GenericViewSet):
             return [IsAuthenticated(), IsObjectOwner()]
         return [AllowAny()]
 
+    @required_params(params=['tweet_id'])
     def list(self, request, *args, **kwargs):
         # GET /api/comments/
-        if 'tweet_id' not in request.query_params:
-            return Response({
-                'message': 'missing tweet_id in request',
-                'success': False,
-            }, status=status.HTTP_400_BAD_REQUEST)
 
         # it works but not the best way
         # tweet_id = request.query_params['tweet_id']
